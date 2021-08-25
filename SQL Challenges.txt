@@ -1,0 +1,211 @@
+Sakila:
+
+1)SELECT * FROM actor;
+2)SELECT last_name FROM actor WHERE first_name = 'John';
+3)SELECT * FROM actor WHERE last_name = 'Neeson';
+4)SELECT * FROM actor WHERE actor_id % 10 = 0;
+5)SELECT description FROM film WHERE film_id=100;
+6)SELECT * FROM film WHERE rating="R";
+7)SELECT * FROM film WHERE rating!="R";
+8)SELECT title, length FROM film ORDER BY length ASC LIMIT 10;
+9)SELECT title, length FROM film WHERE length=(SELECT MAX(length) FROM film);
+10)SELECT title FROM film WHERE special_features LIKE '%Deleted Scenes%';
+
+11)SELECT last_name, COUNT(last_name) from actor GROUP BY last_name HAVING COUNT(last_name) = 1 ORDER BY last_name DESC;
+
+12) SELECT last_name, COUNT(last_name) from actor GROUP BY last_name HAVING COUNT(last_name) > 1 ORDER BY COUNT(last_name) DESC;
+
+13)SELECT * FROM actor WHERE actor_id = (SELECT actor_id AS num FROM film_actor GROUP BY actor_id ORDER BY COUNT(film_id) DESC LIMIT 1);
+
+14)SELECT rental_id,rental.inventory_id, return_date FROM rental
+   JOIN (SELECT inventory_id FROM inventory WHERE film_id = (SELECT film_id FROM film WHERE title='Academy Dinosaur')) AS table2
+   ON
+   rental.inventory_id = table2.inventory_id;
+
+15) SELECT AVG(length) FROM film;
+
+16) 
+//SELECT film_category.film_id, film_category.category_id, AVG(table2.length) FROM film_category
+//JOIN ( SELECT film_id, length FROM film) AS table2
+//ON
+//film_category.film_id = table2.film_id
+//GROUP BY film_category.category_id;
+
+SELECT film_category.film_id, film_category.category_id, AVG(table2.length), table3.name FROM film_category
+JOIN ( SELECT film_id, length FROM film) AS table2
+ON
+film_category.film_id = table2.film_id
+JOIN (SELECT category_id, name FROM category) AS table3
+ON 
+film_category.category_id = table3.category_id
+GROUP BY film_category.category_id;
+
+17)SELECT title, description FROM film WHERE description LIKE '%robot%';
+
+18)SELECT COUNT(release_year) AS MoviesReleasedIn2010 FROM film WHERE release_year=2010;
+
+19)
+SELECT film.title, table3.name AS category FROM film
+JOIN (SELECT film_id, category_id FROM film_category) AS table2
+ON
+film.film_id = table2.film_id
+JOIN (SELECT category_id, name FROM category) AS table3
+ON 
+table2.category_id = table3.category_id
+WHERE
+table3.name = 'Horror';
+
+20)SELECT staff_id, CONCAT(first_name, ' ', last_name) AS full_name FROM staff WHERE staff_id = 2;
+
+21)SELECT film.film_id, film.title, table3.full_name FROM film
+JOIN (SELECT film_id, actor_id FROM film_actor) AS table2
+ON
+film.film_id = table2.film_id
+JOIN (SELECT actor_id, CONCAT(first_name, ' ', last_name) AS full_name FROM actor) AS table3
+ON 
+table2.actor_id = table3.actor_id
+WHERE table3.full_name LIKE '%Fred Costner%';
+
+
+//SELECT title FROM film WHERE film_id IN (
+//	SELECT film_id FROM film_actor WHERE actor_id = (
+//		SELECT actor_id FROM actor WHERE first_name = "Fred" AND last_name = //"Costner"
+//		)
+//	);
+
+22)SELECT DISTINCT COUNT(country) FROM country;
+
+23)SELECT name FROM language ORDER BY name DESC;
+
+24)SELECT CONCAT(first_name, ' ', last_name) AS full_name FROM actor WHERE last_name LIKE '%son'ORDER BY first_name ASC;
+
+25)SELECT film_category.category_id, table2.name, COUNT(film_category.film_id) AS numberOfMovies FROM film_category
+JOIN (SELECT category_id, name FROM category) AS table2
+ON 
+film_category.category_id = table2.category_id
+GROUP BY film_category.category_id
+ORDER BY numberOfMovies DESC LIMIT 1;
+
+***********************************************************************************************
+
+World:
+
+1)SELECT COUNT(ID) FROM city WHERE CountryCode='USA';
+2)SELECT Name, Population, LifeExpectancy FROM country WHERE Name = 'Argentina';
+3)SELECT Name,LifeExpectancy FROM country WHERE LifeExpectancy IS NOT NULL ORDER BY Population DESC LIMIT 1;
+
+4)SELECT country.Code, country.Name, country.Capital, cityTable.Name FROM country
+JOIN (SELECT ID, CountryCode, Name FROM city) AS cityTable
+ON
+country.Capital = cityTable.ID
+WHERE country.Name = 'Spain';
+
+5)SELECT country.Name, Language FROM countrylanguage
+JOIN (SELECT * FROM country WHERE Region LIKE '%Southeast%') AS country
+ON
+countrylanguage.CountryCode = country.Code;
+
+6)SELECT Name FROM city WHERE Name LIKE 'F%' LIMIT 25;
+
+7)SELECT country.Code, country.Name AS Country, COUNT(table2.Name) AS NumberOfCities FROM country
+JOIN (SELECT Name,CountryCode FROM city) AS table2
+ON
+country.Code = table2.CountryCode
+WHERE country.Name='China';
+
+8)SELECT Name, Population FROM country WHERE Population IS NOT NULL AND Population != 0 ORDER BY Population ASC LIMIT 1;
+
+9)SELECT COUNT(Code) FROM country;
+
+10)SELECT Code, Name, SurfaceArea FROM country ORDER BY SurfaceArea DESC LIMIT 10;
+
+11)SELECT city.ID,city.Name, city.Population FROM city 
+JOIN (SELECT Code, Name FROM country) AS table2
+ON
+city.CountryCode = table2.Code
+WHERE table2.Name = 'Japan'
+ORDER BY Population DESC LIMIT 5;
+
+12) UPDATE country SET HeadOfState='Elizabeth II' WHERE HeadOfState='Elisabeth II';
+SELECT Code, Name FROM country WHERE HeadOfState = 'Elizabeth II';
+
+13)SELECT Code, Name, Population/SurfaceArea AS Ratio FROM country ORDER BY Ratio ASC LIMIT 10;
+
+14)SELECT DISTINCT Language from countrylanguage;
+
+15)SELECT Code, Name, GNP FROM country ORDER BY GNP DESC LIMIT 10;
+
+16)SELECT Code, Name, COUNT(table2.Language) AS Languages FROM country
+JOIN (SELECT CountryCode, Language FROM countrylanguage) AS table2
+ON
+country.Code = table2.CountryCode
+GROUP BY Name
+ORDER BY Languages DESC LIMIT 10;
+
+17)SELECT Code, Name, table2.Language, table2.Percentage FROM country
+JOIN (SELECT CountryCode, Language,Percentage FROM countrylanguage) AS table2
+ON
+country.Code = table2.CountryCode
+WHERE Language = 'German' AND Percentage > 50;
+
+18)SELECT Name, LifeExpectancy FROM country WHERE LifeExpectancy IS NOT NULL AND LifeExpectancy != 0 ORDER BY LifeExpectancy ASC LIMIT 10;
+
+19)SELECT GovernmentForm, COUNT(GovernmentForm) AS Num FROM country GROUP BY GovernmentForm ORDER BY Num DESC LIMIT 3;
+
+20)SELECT COUNT(Code) FROM country WHERE IndepYear IS NOT NULL;
+
+************************************************************************************************
+
+Movielens:
+
+1)SELECT title, release_date FROM movies WHERE release_date BETWEEN '1983-01-01' AND '1993-12-31' ORDER BY release_date DESC;
+
+2)SELECT title, AVG(rating) AS lowest_avg
+FROM movies
+JOIN ratings ON movies.id = ratings.movie_id
+GROUP BY title
+HAVING lowest_avg = (
+SELECT MIN(rating_avg)
+FROM (
+SELECT AVG(rating) AS rating_avg
+FROM ratings
+GROUP BY movie_id
+) AS min_avg
+);
+
+
+
+3) SELECT movies.id, movies.title, table2.genre_id, table3.rating, table4.name AS genre, table5.age, table5.gender, table6.name AS occupation FROM movies
+JOIN (SELECT movie_id, genre_id FROM genres_movies) AS table2
+ON
+movies.id = table2.movie_id
+JOIN (SELECT movie_id, user_id, rating FROM ratings) AS table3
+ON
+movies.id = table3.movie_id
+JOIN (SELECT id, name FROM genres) AS table4
+ON
+table2.genre_id = table4.id
+JOIN (SELECT id, age, gender,occupation_id FROM users) AS table5
+ON
+table3.user_id = table5.id
+JOIN (SELECT id,name FROM occupations) AS table6
+ON
+table5.occupation_id = table6.id
+WHERE table4.name = 'Sci-Fi' AND table5.age=24 AND table5.gender='M' AND table3.rating = 5 AND table6.name = 'Student'
+GROUP BY movies.id;
+
+
+4)SELECT DISTINCT title FROM movies
+WHERE release_date = (
+SELECT release_date FROM movies
+GROUP BY release_date
+ORDER BY COUNT(id) DESC LIMIT 1
+);
+
+5)SELECT genres.id, genres.name, COUNT(genresMovies.movie_id) FROM genres
+JOIN (SELECT movie_id, genre_id FROM genres_movies) AS genresMovies
+ON
+genres.id = genresMovies.genre_id
+GROUP BY genres.id;
+
+
